@@ -60,7 +60,7 @@ export default function RestaurantForm(props: RestaurantFormProps) {
                             onSave={props.onSave}
                     />}
             >
-                <RestaurantBasicFormInputs />
+                <RestaurantBasicFormInputs id={props.id} />
 
                 <Section
                         title={'Accesos'}
@@ -82,7 +82,7 @@ export default function RestaurantForm(props: RestaurantFormProps) {
     );
 }
 
-export function RestaurantBasicFormInputs() {
+export function RestaurantBasicFormInputs({ id }) {
     const { filter } = useRestaurantSlugFilter();
     return (
             <>
@@ -116,6 +116,7 @@ export function RestaurantBasicFormInputs() {
                     >
                         <SelectInput
                                 required
+                                disabled={!!id}
                                 validate={required()}
                                 source={'type'}
                                 label={'Tipo'}

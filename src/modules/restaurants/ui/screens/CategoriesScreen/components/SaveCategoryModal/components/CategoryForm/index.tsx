@@ -91,6 +91,7 @@ function FormToolbar(props) {
                                 id: props?.id ?? UuidUtils.persistenceUuid(),
                                 name: data.name,
                                 slug: data.slug,
+                                type: data.type,
                                 status: 'ACTIVE'
                             });
                             props?.onSave?.();

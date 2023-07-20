@@ -105,7 +105,10 @@ function BasicDetailsForm(props) {
                         />
                     }
             >
-                <RestaurantBasicFormInputs editMode />
+                <RestaurantBasicFormInputs
+                        editMode
+                        id={props.restaurant?.id}
+                />
             </Form>
     );
 }
@@ -144,6 +147,8 @@ function FormToolbar(props) {
                                 const restaurant = Restaurant.fromPrimitives({
                                     id: props?.id,
                                     name: data.name,
+                                    coverImageUrl: foundRestaurant.coverImageUrl,
+                                    logoUrl: foundRestaurant.logoUrl,
                                     slug: data.slug,
                                     status: 'ACTIVE',
                                     address: data.address,
@@ -154,7 +159,7 @@ function FormToolbar(props) {
                                     createdAt: foundRestaurant.createdAt,
                                     schedule: data.schedule,
                                     available: foundRestaurant.available,
-                                    type: data.type
+                                    type: foundRestaurant.type
                                 });
 
                                 await save(restaurant, {

@@ -149,6 +149,7 @@ export default abstract class APIRepository {
 
         await fetchJson(url.toString(), {
             method: 'DELETE',
+            body: JSON.stringify({}),
             token: withAuth ? this.tokenId : undefined
         });
     }

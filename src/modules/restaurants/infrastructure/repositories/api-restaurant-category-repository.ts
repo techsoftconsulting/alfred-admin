@@ -16,7 +16,7 @@ export default class ApiRestaurantCategoryRepository extends APIRepository imple
                 value: 'ACTIVE'
             }
         ];
-   
+
         if (filters?.type) {
             defaultFilters.push({
                 field: 'type',

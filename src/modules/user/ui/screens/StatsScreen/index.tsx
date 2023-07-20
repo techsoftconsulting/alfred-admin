@@ -69,167 +69,166 @@ export default function StatsScreen() {
     };
 
     return (
-            <AppLayout
-                    title={'Reportes'}
-                    loading={loading || loadingMalls}
+        <AppLayout
+            title={'Reportes'}
+            loading={loading || loadingMalls}
+        >
+            <Box
+                flex={1}
+                bg={'white'}
             >
-                <Box
-                        flex={1}
-                        bg={'white'}
-                >
-                    <ScrollView>
-                        <Section
-                                title={'Restaurantes con más visitas (más clics)'}
-                        >
-                            <Box>
-                                {
-                                    mostVisitedRestaurants.data.length > 0 ? (
-                                            <BarChar
-                                                    data={[mostVisitedRestaurants]}
-                                            />
-                                    ) : <EmptyState />
-                                }
-                            </Box>
-                        </Section>
+                <ScrollView>
+                    <Section
+                        title={'Restaurantes con más visitas (más clics)'}
+                    >
+                        <Box>
+                            {
+                                mostVisitedRestaurants.data.length > 0 ? (
+                                    <BarChar
+                                        data={[mostVisitedRestaurants]}
+                                    />
+                                ) : <EmptyState />
+                            }
+                        </Box>
+                    </Section>
 
-                        <Section
-                                title={'Restaurantes más buscados'}
-                        >
-                            <Box>
-                                {
-                                    mostSearchedRestaurants.data.length > 0 ? (
-                                            <BarChar data={[mostSearchedRestaurants]} />
-                                    ) : <EmptyState />
-                                }
-                            </Box>
-                        </Section>
-                        <Section
-                                title={'Plazas más visitadas'}
-                        >
-                            <Box>
-                                {
-                                    mostVisitedMalls.data.length > 0 ? (
-                                            <BarChar data={[mostVisitedMalls]} />
-                                    ) : <EmptyState />
-                                }
-                            </Box>
-                        </Section>
+                    <Section
+                        title={'Restaurantes más buscados'}
+                    >
+                        <Box>
+                            {
+                                mostSearchedRestaurants.data.length > 0 ? (
+                                    <BarChar data={[mostSearchedRestaurants]} />
+                                ) : <EmptyState />
+                            }
+                        </Box>
+                    </Section>
+                    <Section
+                        title={'Plazas más visitadas'}
+                    >
+                        <Box>
+                            {
+                                mostVisitedMalls.data.length > 0 ? (
+                                    <BarChar data={[mostVisitedMalls]} />
+                                ) : <EmptyState />
+                            }
+                        </Box>
+                    </Section>
 
-                        <Section
-                                title={'Restaurantes con más reservaciones'}
-                        >
-                            <Box>
-                                {
-                                    mostReservedRestaurants.data.length > 0 ? (
-                                            <BarChar data={[mostReservedRestaurants]} />
-                                    ) : <EmptyState />
-                                }
-                            </Box>
-                        </Section>
-                        <Section
-                                title={'Promociones más vistas'}
-                        >
-                            <Box>
-                                {
-                                    mostVisitedPromotions.data.length > 0 ? (
-                                            <BarChar data={[mostVisitedPromotions]} />
-                                    ) : <EmptyState />
-                                }
-                            </Box>
-                        </Section>
-                    </ScrollView>
-                </Box>
-            </AppLayout>
+                    <Section
+                        title={'Restaurantes con más reservaciones'}
+                    >
+                        <Box>
+                            {
+                                mostReservedRestaurants.data.length > 0 ? (
+                                    <BarChar data={[mostReservedRestaurants]} />
+                                ) : <EmptyState />
+                            }
+                        </Box>
+                    </Section>
+                    <Section
+                        title={'Promociones más vistas'}
+                    >
+                        <Box>
+                            {
+                                mostVisitedPromotions.data.length > 0 ? (
+                                    <BarChar data={[mostVisitedPromotions]} />
+                                ) : <EmptyState />
+                            }
+                        </Box>
+                    </Section>
+                </ScrollView>
+            </Box>
+        </AppLayout>
     );
 }
 
 function EmptyState() {
     return (
+        <Box
+            minHeight={400}
+            justifyContent={'center'}
+            alignItems={'center'}
+        >
             <Box
-                    minHeight={400}
-                    justifyContent={'center'}
-                    alignItems={'center'}
+                justifyContent={'center'}
+                alignItems={'center'}
             >
-                <Box
-                        justifyContent={'center'}
-                        alignItems={'center'}
-                >
-                    <Icon
-                            name={'ios-stats-chart'}
-                            type={'ionicon'}
-                            color={'greyMedium'}
-                            numberSize={80}
-                    />
-                    <Box mt={'m'}>
-                        <Text color={'greyMain'}>Sin estadísticas</Text>
-                    </Box>
+                <Icon
+                    name={'ios-stats-chart'}
+                    type={'ionicon'}
+                    color={'greyMedium'}
+                    numberSize={80}
+                />
+                <Box mt={'m'}>
+                    <Text color={'greyMain'}>Sin estadísticas</Text>
                 </Box>
             </Box>
+        </Box>
     );
 }
 
 function Section({ title, children }: { title: string, children: any }) {
     return (
-            <Box
-                    marginVertical={'xl'}
-            >
-                <Box mb={'m'}>
-                    <Text
-                            bold
-                            variant={'heading3'}
-                    >{title}</Text>
+        <Box
+            marginVertical={'xl'}
+        >
+            <Box mb={'m'}>
+                <Text
+                    bold
+                    variant={'heading3'}
+                >{title}</Text>
 
-                </Box>
-
-                <Box>
-                    {children}
-                </Box>
             </Box>
+
+            <Box>
+                {children}
+            </Box>
+        </Box>
     );
 }
-
 
 function BarChar({ data }: { data: any }) {
 
     const primaryAxis = React.useMemo<AxisOptions<typeof data[number]['data'][number]>>(
-            () => ({
-                getValue: (datum) => datum.primary
-            }),
-            []
+        () => ({
+            getValue: (datum) => datum.primary
+        }),
+        []
     );
 
     const secondaryAxes = React.useMemo<AxisOptions<typeof data[number]['data'][number]>[]>(
-            () => [
-                {
-                    getValue: (datum) => datum.secondary
-                }
-            ],
-            []
+        () => [
+            {
+                getValue: (datum) => datum.secondary
+            }
+        ],
+        []
     );
     const { width } = useDimensions();
     return (
-            <>
-                <ResizableBox
-                        resizable={false}
-                        width={width - DRAWER_WIDTH - 100}
-                        height={400}
-                        style={{
-                            boxShadow: 'none'
-                        }}
-                >
-                    <Chart
-                            style={{
-                                boxShadow: 'none'
-                            }}
-                            options={{
-                                tooltip: false,
-                                data,
-                                primaryAxis,
-                                secondaryAxes,
-                                defaultColors: [palette.PURPLE]
-                            }}
-                    />
-                </ResizableBox>
-            </>
+        <>
+            <ResizableBox
+                resizable={false}
+                width={width - DRAWER_WIDTH - 100}
+                height={400}
+                style={{
+                    boxShadow: 'none'
+                }}
+            >
+                <Chart
+                    style={{
+                        boxShadow: 'none'
+                    }}
+                    options={{
+                        tooltip: false,
+                        data,
+                        primaryAxis,
+                        secondaryAxes,
+                        defaultColors: [palette.PURPLE]
+                    }}
+                />
+            </ResizableBox>
+        </>
     );
 }
