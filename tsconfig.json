@@ -1,37 +1,43 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2019",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "allowJs": true,
-    "resolveJsonModule": true,
+    "jsx": "react-native",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "moduleResolution": "node",
+    "noEmit": true,
     "skipLibCheck": true,
-    //"strict": true,
-    "importHelpers": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "baseUrl": "./",
     "paths": {
+      "@main-components/*": [
+        "./src/modules/_shared/ui/components/*"
+      ],
+      "@utils/*": [
+        "./src/modules/_shared/domain/utils/*"
+      ],
+      "@modules/*": [
+        "./src/modules/*"
+      ],
+      "@navigation/*": [
+        "./src/navigation/*"
+      ],
+      "@api": [
+        "./src/api/index"
+      ],
+      "@images/*": [
+        "./src/utils/constants/images*"
+      ],
       "@shared/*": [
-        "src/main/shared/*"
+        "./src/modules/_shared/*"
       ],
-      "@restaurants/*": [
-        "src/main/restaurants/*"
-      ],
-      "@screens/*": [
-        "src/main/screens/*"
-      ],
-      "@admin/*": [
-        "src/main/admin/*"
-      ],
-      "@apps/*": [
-        "apps/*"
+      "@assets/*": [
+        "./src/assets/*"
       ]
     }
-  }
+  },
+  "extends": "expo/tsconfig.base"
 }
