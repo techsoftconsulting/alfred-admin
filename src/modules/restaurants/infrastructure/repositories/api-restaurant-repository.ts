@@ -45,23 +45,13 @@ export default class ApiRestaurantRepository extends APIRepository implements Re
 
         const docs: any = await this.findByCriteriaRequest(COLLECTION_NAME, defaultFilters, undefined, undefined, true);
 
-        const restaurantManagers = await this.findByCriteriaRequest('restaurant-manager', [{
-            field: 'status',
-            operator: '==',
-            value: 'ACTIVE'
-        }], undefined, undefined, true);
-
-        const vendorManagers = await this.findByCriteriaRequest('vendor-manager', [{
-            field: 'status',
-            operator: '==',
-            value: 'ACTIVE'
-        }], undefined, undefined, true);
+        const managers = await this.getStoresManagers();
 
         return RestaurantMapper.toDomainFromArray(docs.map((doc) => {
             const manager = (() => {
-                if (doc.type === 'RESTAURANT') return restaurantManagers.find((m) => m.restaurantId === doc.id);
+                if (doc.type === 'RESTAURANT') return managers.restaurantManagers.find((m) => m.restaurantId === doc.id);
 
-                return vendorManagers.find((m) => m.vendorId === doc.id);
+                return managers.vendorManagers.find((m) => m.vendorId === doc.id);
             })();
 
             return {
@@ -69,6 +59,58 @@ export default class ApiRestaurantRepository extends APIRepository implements Re
                 manager: manager
             };
         }));
+    }
+
+    private async getStoreManager(store: { id: string; type: string }) {
+
+        const filter = [
+            {
+                field: 'status',
+                operator: '==',
+                value: 'ACTIVE'
+            },
+            {
+                field: 'principal',
+                operator: '==',
+                value: true
+            }
+        ];
+
+        filter.push({
+            field: store.type == 'RESTAURANT' ? 'restaurantId' : 'vendorId',
+            operator: '==',
+            value: store.id
+        });
+
+        const managers = store.type == 'RESTAURANT' ?
+            await this.findByCriteriaRequest('restaurant-manager', filter, undefined, undefined, true)
+            : await this.findByCriteriaRequest('vendor-manager', filter, undefined, undefined, true);
+
+        return managers?.[0];
+    }
+
+    private async getStoresManagers() {
+
+        const filter = [
+            {
+                field: 'status',
+                operator: '==',
+                value: 'ACTIVE'
+            },
+            {
+                field: 'principal',
+                operator: '==',
+                value: true
+            }
+        ];
+
+        const restaurantManagers = await this.findByCriteriaRequest('restaurant-manager', filter, undefined, undefined, true);
+        const vendorManagers = await this.findByCriteriaRequest('vendor-manager', filter, undefined, undefined, true);
+
+        return {
+            restaurantManagers,
+            vendorManagers
+        };
     }
 
     remove(id: string): Promise<void> {
@@ -87,7 +129,15 @@ export default class ApiRestaurantRepository extends APIRepository implements Re
 
         if (!doc) return null;
 
-        return RestaurantMapper.toDomain(doc);
+        const manager = await this.getStoreManager({
+            id: doc.id,
+            type: doc.type
+        })
+
+        return RestaurantMapper.toDomain({
+            ...doc,
+            manager: manager
+        });
     }
 
     async guardUniqueSlug(slug: string, id: string) {

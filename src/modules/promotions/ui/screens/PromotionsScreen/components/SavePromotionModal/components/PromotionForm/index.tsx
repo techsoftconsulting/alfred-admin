@@ -19,6 +19,8 @@ import UuidUtils from '@utils/misc/uuid-utils';
 import React, { useState } from 'react';
 import useRepository from '@shared/domain/hooks/use-repository';
 import RestaurantRepository from '@modules/restaurants/domain/repositories/restaurant-repository';
+import PromotionPreview
+    from '@modules/promotions/ui/screens/PromotionsScreen/components/SavePromotionModal/components/PromotionForm/components/PromotionPreview';
 
 interface PromotionFormProps {
     id?: string;
@@ -118,11 +120,14 @@ export default function PromotionForm(props: PromotionFormProps) {
                                 label={'Imagen'}
                                 helperText={'Aspecto 2:1. Min: 800px x 400px'}
                         />
+
+                        <PromotionPreview />
                     </Box>
                 </Box>
             </Form>
     );
 }
+
 
 function FormToolbar(props) {
     const { execute: save, loading } = useSavePromotion();

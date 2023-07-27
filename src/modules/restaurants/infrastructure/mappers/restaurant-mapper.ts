@@ -41,28 +41,28 @@ export default class RestaurantMapper {
     static toPersistence(restaurant: Restaurant): any {
         const dto = restaurant.toPrimitives();
 
-        return ObjectUtils.omitUnknown({
+        return {
             id: dto.id,
             logoUrl: dto.logoUrl,
             createdAt: dto.createdAt,
             coverImageUrl: dto.coverImageUrl,
             contactPhone: dto.contactPhone,
-            categoriesIds: dto.categoriesIds,
+            categoriesIds: dto.categoriesIds ?? [],
             address: dto.address,
             name: dto.name,
             slug: dto.slug,
             recommended: dto.recommended,
             status: dto.status,
             description: dto.description,
-            schedule: ObjectUtils.omitUnknown(Object.keys(dto.schedule).reduce((acc, id) => {
+            schedule: dto.schedule ? ObjectUtils.omitUnknown(Object.keys(dto.schedule).reduce((acc, id) => {
                 return {
                     ...acc,
                     [id]: ObjectUtils.omitUnknown(dto.schedule[id])
                 };
-            }, {})),
+            }, {})) : undefined,
             available: dto.available,
             type: dto.type
-        });
+        };
     }
 
 

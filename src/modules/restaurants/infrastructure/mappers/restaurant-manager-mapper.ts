@@ -12,7 +12,8 @@ export default class RestaurantManagerMapper {
             status: dto.status,
             lastName: dto.lastName,
             role: dto.role,
-            storeType: dto.storeType
+            storeType: dto.storeType,
+            principal: dto.principal ?? false
         });
     }
 
@@ -37,7 +38,8 @@ export default class RestaurantManagerMapper {
                 lastName: dto.lastName,
                 roles: ['USER'],
                 status: dto.status,
-                type: dto.role
+                type: dto.role,
+                principal: dto.principal ?? false
             }),
             [prop]: dto.restaurantId
         };

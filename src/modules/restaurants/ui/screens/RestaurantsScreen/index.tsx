@@ -18,7 +18,7 @@ import SaveRestaurantModal from '@modules/restaurants/ui/screens/RestaurantsScre
 import useConfirm from '@shared/domain/hooks/use-confirm';
 import useNotify from '@shared/domain/hooks/use-notify';
 import { useFocusEffect } from '@shared/domain/navigation/use-focus-effect';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RestaurantMall from '@modules/restaurants/domain/models/restaurant-mall';
 import useFindRestaurantMalls from '@modules/restaurants/application/malls/use-find-restaurant-malls';
 import { Form } from '@main-components/Form/Form';
@@ -30,10 +30,13 @@ import SelectInput from '@main-components/Form/inputs/SelectInput';
 import { useCheckPermission } from '@modules/auth/infrastructure/providers/permissions';
 import SaveManagerModal from '@modules/restaurants/ui/screens/RestaurantsScreen/components/SaveManagerModal';
 import { useUtils } from '@shared/domain/hooks/use-utils';
+import StoreOptionMenu from '@modules/restaurants/ui/screens/RestaurantsScreen/components/StoreOptionMenu';
+import ShowManagerModal from '@modules/restaurants/ui/screens/RestaurantsScreen/components/ShowManagerModal';
 
 export default function RestaurantsScreen() {
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [showManagerModal, setShowManagerModal] = useState(false);
+    const [showManagerPreviewModal, setShowManagerViewModal] = useState(false);
 
     const [editingItem, setEditingItem] = useState(null);
     const [activeStore, setActiveStore] = useState(null);
@@ -151,10 +154,13 @@ export default function RestaurantsScreen() {
                                                 '¿Estás seguro que deseas eliminar este local?'
                                     });
                                 }}
-
                                 onOpenManagerModal={(res) => {
                                     setShowManagerModal(true);
                                     setActiveStore(res);
+                                }}
+                                onShowManager={(store) => {
+                                    setShowManagerViewModal(true);
+                                    setActiveStore(store);
                                 }}
                         />
                     </ScrollView>
@@ -171,6 +177,16 @@ export default function RestaurantsScreen() {
                             store={activeStore}
                     />
 
+                    <ShowManagerModal
+                            modal={{
+                                visible: showManagerPreviewModal,
+                                onDismiss() {
+                                    setShowManagerViewModal(false);
+                                    setActiveStore(null);
+                                }
+                            }}
+                            store={activeStore}
+                    />
                     <SaveRestaurantModal
                             modal={{
                                 visible: showSaveModal,
@@ -195,6 +211,7 @@ function RestaurantsList({
     categories,
     malls,
     onDeleteItem,
+    onShowManager,
     onOpenManagerModal
 }: {
     loading: boolean;
@@ -203,7 +220,8 @@ function RestaurantsList({
     restaurants: Restaurant[];
     onEditItem: any;
     onDeleteItem: any;
-    onOpenManagerModal: any
+    onOpenManagerModal: any,
+    onShowManager: any
 }) {
 
     const utils = useUtils();
@@ -424,6 +442,14 @@ function RestaurantsList({
                                                                     type: r.type
                                                                 });
                                                             }}
+                                                            onShowManager={(managerId) => {
+                                                                onShowManager({
+                                                                    id: r.id,
+                                                                    name: r.name,
+                                                                    type: r.type,
+                                                                    managerId: managerId
+                                                                });
+                                                            }}
                                                     />
                                                 </TableCell>
                                             </TableRow>
@@ -439,6 +465,10 @@ function StatusUpdate({ source, item }: { source: string, item: Restaurant }) {
     const value = item[source];
 
     const [isActive, setIsActive] = useState(value);
+
+    useEffect(() => {
+        setIsActive(value);
+    }, [value]);
 
     const { execute: save, loading } = useSaveRestaurant();
     const { ready, check } = useCheckPermission();
@@ -488,8 +518,9 @@ function RowOptions({
     entity,
     onEdit,
     onDelete,
-    onOpenManagerModal
-}: { entity: Restaurant, onEdit: any; onDelete: any, onOpenManagerModal: any }) {
+    onOpenManagerModal,
+    onShowManager
+}: { entity: Restaurant, onShowManager: any; onEdit: any; onDelete: any, onOpenManagerModal: any }) {
     const { ready, check } = useCheckPermission();
     return (
             <Box
@@ -530,13 +561,34 @@ function RowOptions({
                                         }}
                                         iconType={'feather'}
                                         iconColor={'greyDark'}
-                                        iconName={'user'}
+                                        iconName={'user-plus'}
+                                />
+                        )
+                }
+
+                {
+                        !!entity.managerId && check('CREATE_STORES') && (
+                                <StoreOptionMenu
+                                        renderTarget={({ onPress }) => {
+                                            return (
+                                                    <IconButton
+                                                            onPress={onPress}
+                                                            iconType={'entypo'}
+                                                            iconColor={'greyDark'}
+                                                            iconName={'dots-three-vertical'}
+                                                    />
+                                            );
+                                        }}
+                                        onItemPress={(id) => {
+                                            onShowManager(entity.managerId);
+                                        }}
                                 />
                         )
                 }
             </Box>
     );
 }
+
 
 function AddButton({ onPress }) {
     return (

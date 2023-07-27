@@ -4,20 +4,20 @@ import RestaurantManager, { RestaurantManagerPrimitiveProps } from '@modules/res
 interface RestaurantProps {
     id: string;
     name: string;
-    categoriesIds: string[];
-    description: string;
+    slug: string;
+    type: string;
+    status: string;
+    createdAt: Date;
+    available: boolean;
+    categoriesIds?: string[];
+    description?: string;
     logoUrl?: string;
     coverImageUrl?: string;
-    slug: string;
-    schedule: any;
-    address: string;
-    contactPhone: string;
-    status: string;
+    schedule?: any;
+    address?: string;
+    contactPhone?: string;
     manager?: RestaurantManager;
-    createdAt: Date;
     recommended?: boolean;
-    available: boolean;
-    type: string;
 }
 
 interface RestaurantPrimitiveProps extends Omit<RestaurantProps, 'manager'> {
@@ -43,6 +43,10 @@ export default class Restaurant {
 
     get coverImageUrl() {
         return this.props.coverImageUrl;
+    }
+
+    get manager() {
+        return this.props.manager;
     }
 
     get contactPhone() {

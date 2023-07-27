@@ -55,8 +55,7 @@ class AppAuthProvider implements AuthProvider {
 
             return token;
         } catch (e) {
-            console.log(e);
-            throw new Error('USER_NOT_FOUND');
+            throw new Error(e.message);
         }
     }
 

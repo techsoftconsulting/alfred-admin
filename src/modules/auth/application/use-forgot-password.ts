@@ -16,37 +16,40 @@ export default function useForgotPassword() {
             try {
                 setLoaded(true);
 
-                await userRepo.resetPassword(userEmail);
+                await userRepo.forgotPassword(userEmail);
 
                 setLoading(false);
 
-                notify(
-                    'Te hemos enviado un correo con las instrucciones para recuperar tu contraseña',
-                    'success',
-                );
+                /* notify(
+                     'Te hemos enviado un correo con las instrucciones para recuperar tu contraseña',
+                     'success'
+                 );*/
             } catch (error) {
                 setLoading(false);
+                throw new Error(error?.message);
+                /*
+                                if (error.message == 'EMAIL_NOT_SEND') {
+                                    notify(
+                                        'No fue posible enviar el correo, por favor inténtalo nuevamente',
+                                        'warning'
+                                    );
+                                    return;
+                                }
 
-                if (error.message == 'EMAIL_NOT_SEND') {
-                    notify(
-                        'No fue posible enviar el correo, por favor inténtalo nuevamente',
-                        'warning',
-                    );
-                    return;
-                }
+                                if (error.message == 'CREDENTIALS_NOT_FOUND') {
+                                    notify('Este usuario no está registrado', 'warning');
+                                    return;
+                                }
 
-                if (error.message == 'CREDENTIALS_NOT_FOUND') {
-                    notify('Este usuario no está registrado', 'warning');
-                    return;
-                }
-
-                notify(
-                    'No fue posible procesar tu solicitud. Inténtalo nuevamente',
-                    'error',
-                );
+                                notify(
+                                    'No fue posible procesar tu solicitud. Inténtalo nuevamente',
+                                    'error'
+                                );*/
+            } finally {
+                setLoading(false);
             }
         },
         loading,
-        loaded,
+        loaded
     };
 }

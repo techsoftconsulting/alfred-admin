@@ -17,7 +17,7 @@ export function createScheduleDate(date) {
 export function isValidSchedule(message) {
     return (schedule) => {
         if (!schedule) return message;
-        if (!schedule?.MONDAY) return message;
+       
         const items = Object.values(schedule);
 
         if (items.filter(el => el.active).length === 0) return message;

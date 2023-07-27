@@ -158,7 +158,7 @@ function FormToolbar(props) {
                                     description: data.description,
                                     createdAt: foundRestaurant.createdAt,
                                     schedule: data.schedule,
-                                    available: foundRestaurant.available,
+                                    available: data.available ?? foundRestaurant.available,
                                     type: foundRestaurant.type
                                 });
 

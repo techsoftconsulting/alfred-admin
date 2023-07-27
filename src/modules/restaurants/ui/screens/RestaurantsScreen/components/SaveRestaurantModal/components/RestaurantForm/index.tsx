@@ -5,7 +5,7 @@ import { Form } from '@main-components/Form/Form';
 import CheckboxInput from '@main-components/Form/inputs/CheckboxInput';
 import PhoneTextInput from '@main-components/Form/inputs/PhoneTextInput';
 import TextInput from '@main-components/Form/inputs/TextInput';
-import WeekScheduleInput, { isValidSchedule } from '@main-components/Form/inputs/WeekScheduleInput';
+import WeekScheduleInput from '@main-components/Form/inputs/WeekScheduleInput';
 import Text from '@main-components/Typography/Text';
 import useSaveRestaurant from '@modules/restaurants/application/use-save-restaurant';
 import useSaveRestaurantManager from '@modules/restaurants/application/use-save-restaurant-manager';
@@ -65,8 +65,26 @@ export default function RestaurantForm(props: RestaurantFormProps) {
                 <Section
                         title={'Accesos'}
                         subtitle={'Agrega un usuario administrador al local'}
+
                 />
 
+                <CheckboxInput
+                        source={'enableUser'}
+                        title={'Asignar usuario'}
+                />
+                <ManagerController />
+            </Form>
+    );
+}
+
+function ManagerController() {
+    const { watch } = useForm();
+    const values = watch(['enableUser']);
+
+    if (!values.enableUser) return <Box />;
+
+    return (
+            <Box>
                 <Box
                         flex={0.5}
                         flexDirection={'row'}
@@ -74,11 +92,10 @@ export default function RestaurantForm(props: RestaurantFormProps) {
                     <RestaurantManagersInput
                             source={'managers'}
                             label={'Usuarios'}
-                            required
                             validate={isValidManagers()}
                     />
                 </Box>
-            </Form>
+            </Box>
     );
 }
 
@@ -107,42 +124,34 @@ export function RestaurantBasicFormInputs({ id }) {
                 </Box>
 
 
-                <Box flexDirection={'row'}>
+                <Box
+                        gap={'m'}
+                        flexDirection={'row'}
+                >
                     <Box
                             flex={0.5}
-                            mr={'m'}
                     >
                         <TextInput
                                 required
+                                noMargin
                                 validate={required()}
                                 label={'Nombre'}
                                 source={'name'}
                         />
                     </Box>
 
-                    <Box flex={0.5}>
-                        <PhoneTextInput
-                                required
-                                validate={required()}
-                                label={'Teléfono'}
-                                source={'contactPhone'}
-                        />
+                    <Box>
+                        <SlugInputController />
                     </Box>
-                </Box>
 
-                <Box
-                        flexDirection={'row'}
-                >
-                    <Box
-                            flex={0.5}
-                            mr={'m'}
-                    >
+                    <Box flex={0.5}>
                         <SelectInput
                                 required
                                 disabled={!!id}
                                 validate={required()}
                                 source={'type'}
                                 label={'Tipo'}
+                                noMargin
                                 choices={[
                                     {
                                         id: 'VENDOR',
@@ -154,22 +163,56 @@ export function RestaurantBasicFormInputs({ id }) {
                                     }
                                 ]}
                         />
-                    </Box>
 
-                    <Box flex={0.5}>
-
-                        <SlugInputController />
                     </Box>
+                </Box>
+
+
+                <Box
+
+                >
+                    <PhoneTextInput
+                            label={'Teléfono'}
+                            source={'contactPhone'}
+                    />
                 </Box>
 
 
                 <TextInput
                         multiline
-                        required
-                        validate={required()}
                         label={'Descripción'}
                         source={'description'}
                 />
+
+                <Box>
+                    <Section title={'Disponibilidad'} />
+
+                    <CheckboxInput
+                            source={'available'}
+                            title={''}
+                            required
+                            label={'Habilitado'}
+                    />
+
+                </Box>
+
+                <Section title={'Categoría y ubicación'} />
+
+                <Box flexDirection={'row'}>
+                    <Box
+                            mr={'m'}
+                            flex={0.5}
+                    >
+                        <CategoryInputController />
+                    </Box>
+
+                    <Box flex={0.5}>
+                        <RestaurantMallSelectInput
+                                label={'Ubicación (Plaza)'}
+                                source={'address'}
+                        />
+                    </Box>
+                </Box>
 
                 <Section
                         title={'Publicidad y recomendación'}
@@ -187,28 +230,9 @@ export function RestaurantBasicFormInputs({ id }) {
                     />
                 </Box>
 
+
                 <ScheduleSectionController />
 
-
-                <Section title={'Categoría y ubicación'} />
-
-                <Box flexDirection={'row'}>
-                    <Box
-                            mr={'m'}
-                            flex={0.5}
-                    >
-                        <CategoryInputController />
-                    </Box>
-
-                    <Box flex={0.5}>
-                        <RestaurantMallSelectInput
-                                required
-                                validate={required()}
-                                label={'Ubicación (Plaza)'}
-                                source={'address'}
-                        />
-                    </Box>
-                </Box>
             </>
     );
 }
@@ -225,6 +249,7 @@ function SlugInputController() {
     return (
             <TextInput
                     required
+                    noMargin
                     validate={required()}
                     filterText={filter}
                     label={'Slug'}
@@ -246,9 +271,7 @@ function CategoryInputController() {
 
     return (
             <RestaurantCategorySelectInput
-                    required
                     type={values?.type}
-                    validate={required()}
                     label={'Categorías'}
                     source={'categoriesIds'}
             />
@@ -264,8 +287,6 @@ function ScheduleSectionController() {
                 <WeekScheduleInput
                         source={'schedule'}
                         label={'Disponibilidad'}
-                        required
-                        validate={isValidSchedule('Horario inválido')}
                 />
             </>
     );
@@ -297,27 +318,11 @@ function FormToolbar(props) {
                         }}
                         onSubmit={async (data) => {
                             const managerDto = data.managers?.[0];
-                            if (!managerDto) return;
 
                             const createdAt = new Date();
                             const id = props?.id ?? UuidUtils.persistenceUuid();
 
                             try {
-
-                                const manager = RestaurantManager.fromPrimitives({
-                                    id: managerDto.id ?? UuidUtils.persistenceUuid(),
-                                    status: 'ACTIVE',
-                                    role: managerDto.role,
-                                    lastName: managerDto.lastName,
-                                    firstName: managerDto.firstName,
-                                    email: managerDto.email,
-                                    restaurantId: id,
-                                    storeType: data.type,
-                                    credentials: {
-                                        email: managerDto.email,
-                                        password: managerDto.password
-                                    }
-                                });
 
                                 const restaurant = Restaurant.fromPrimitives({
                                     id: id,
@@ -331,8 +336,7 @@ function FormToolbar(props) {
                                     categoriesIds: data.categoriesIds,
                                     contactPhone: data.contactPhone,
                                     schedule: data.schedule,
-                                    manager: manager.toPrimitives(),
-                                    available: true,
+                                    available: data.available ?? false,
                                     type: data.type
                                 });
 
@@ -341,16 +345,12 @@ function FormToolbar(props) {
                                         restaurant.id
                                 );
 
-                                await saveManager(manager);
 
                                 await save(restaurant, {
                                     logoUrl: data.logoUrl,
                                     coverImageUrl: data.coverImageUrl
                                 });
 
-                                props?.onSave?.();
-
-                                notify('Guardado exitosamente', 'success');
                             } catch (e) {
                                 if (e.message === 'SLUG_ALREADY_EXISTS') {
                                     setError('slug', {
@@ -361,19 +361,52 @@ function FormToolbar(props) {
 
                                 props?.onSave?.();
 
-                                if (e.message === 'MANAGER_ALREADY_EXISTS') {
-                                    notify('Ya existe una cuenta con el email: ' + managerDto.email, 'error');
-                                    return;
-                                }
-
-                                if (e.message === 'USER_ALREADY_EXISTS') {
-                                    notify('Ya existe una cuenta con el email: ' + managerDto.email, 'error');
-                                    return;
-                                }
-
-
                                 notify('Lo sentimos, ha ocurrido un error inseperado.', 'error');
+                                return;
                             }
+
+
+                            if (managerDto) {
+                                try {
+                                    const manager = RestaurantManager.fromPrimitives({
+                                        id: managerDto.id ?? UuidUtils.persistenceUuid(),
+                                        status: 'ACTIVE',
+                                        role: managerDto.role,
+                                        lastName: managerDto.lastName,
+                                        firstName: managerDto.firstName,
+                                        email: managerDto.email,
+                                        restaurantId: id,
+                                        storeType: data.type,
+                                        credentials: {
+                                            email: managerDto.email,
+                                            password: managerDto.password
+                                        }
+                                    });
+
+                                    await saveManager(manager);
+
+                                } catch (e) {
+                                    props?.onSave?.();
+
+                                    if (e.message === 'MANAGER_ALREADY_EXISTS') {
+                                        notify('Ya existe una cuenta con el email: ' + managerDto.email, 'error');
+                                        return;
+                                    }
+
+                                    if (e.message === 'USER_ALREADY_EXISTS') {
+                                        notify('Ya existe una cuenta con el email: ' + managerDto.email, 'error');
+                                        return;
+                                    }
+                                    return;
+
+                                }
+
+                            }
+
+
+                            props?.onSave?.();
+                            notify('Guardado exitosamente', 'success');
+
                         }}
                 />
             </Box>

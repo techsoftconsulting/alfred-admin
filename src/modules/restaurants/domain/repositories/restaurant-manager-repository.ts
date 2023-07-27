@@ -9,5 +9,5 @@ export default interface RestaurantManagerRepository {
 
     findByEmail(email: string, type: string): Promise<RestaurantManager | null>;
 
-    findAll(restaurantId: string): Promise<RestaurantManager[]>;
+    findAll(restaurantId: string, filters?: any): Promise<RestaurantManager[]>;
 }

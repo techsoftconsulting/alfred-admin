@@ -20,42 +20,43 @@ export default function RestaurantManagersInput(props) {
     const { hasError, error } = useFormFieldErrors(props.source as string);
 
     return (
-        <BaseInput
-            error={error}
-            WrapperComponent={Box}
-
-        >
-            <Box
-                gap={'m'}
+            <BaseInput
+                    error={error}
+                    WrapperComponent={Box}
 
             >
-                {
-                    input.value?.map((el, idx) => {
-                        return (
-                            <ManagerItem
-                                key={idx}
-                                number={idx + 1}
-                                item={el}
-                                onChange={(item) => {
-                                    input.onChange(input.value?.map(e => {
-                                        if (e.id == el.id) {
-                                            return {
-                                                ...e,
-                                                ...item
-                                            };
-                                        }
+                <Box
+                        gap={'m'}
 
-                                        return e;
-                                    }));
-                                }}
-                                onDelete={() => {
-                                    input.onChange(input.value?.filter(e => el.id !== e.id));
-                                }}
-                            />
-                        );
-                    })
-                }
-                {/*<AddItem
+                >
+                    {
+                        input.value?.map((el, idx) => {
+                            return (
+                                    <ManagerItem
+                                            {...props}
+                                            key={idx}
+                                            number={idx + 1}
+                                            item={el}
+                                            onChange={(item) => {
+                                                input.onChange(input.value?.map(e => {
+                                                    if (e.id == el.id) {
+                                                        return {
+                                                            ...e,
+                                                            ...item
+                                                        };
+                                                    }
+
+                                                    return e;
+                                                }));
+                                            }}
+                                            onDelete={() => {
+                                                input.onChange(input.value?.filter(e => el.id !== e.id));
+                                            }}
+                                    />
+                            );
+                        })
+                    }
+                    {/*<AddItem
                             onPress={() => {
                                 input.onChange([
                                     ...input.value ?? [],
@@ -70,63 +71,63 @@ export default function RestaurantManagersInput(props) {
                             }}
                     />
 */}
-            </Box>
-        </BaseInput>
+                </Box>
+            </BaseInput>
     );
 }
 
 function AddItem({ onPress }) {
     return (
-        <TouchableOpacity onPress={onPress}>
-            <Box
-                borderRadius={10}
-                height={20}
-                p={'m'}
-                borderWidth={1}
-                borderColor={'primaryMain'}
-                alignItems={'center'}
-                justifyContent={'center'}
-                style={{
-                    borderStyle: 'dotted'
-                }}
-                bg={'greyLight'}
-                flexDirection={'row'}
-            >
-                <Box mr={'m'}>
-                    <Icon
-                        name={'plus'}
-                        numberSize={20}
-                        color={'primaryMain'}
-                    />
+            <TouchableOpacity onPress={onPress}>
+                <Box
+                        borderRadius={10}
+                        height={20}
+                        p={'m'}
+                        borderWidth={1}
+                        borderColor={'primaryMain'}
+                        alignItems={'center'}
+                        justifyContent={'center'}
+                        style={{
+                            borderStyle: 'dotted'
+                        }}
+                        bg={'greyLight'}
+                        flexDirection={'row'}
+                >
+                    <Box mr={'m'}>
+                        <Icon
+                                name={'plus'}
+                                numberSize={20}
+                                color={'primaryMain'}
+                        />
+                    </Box>
+                    <Box>
+                        <Text>Agregar nuevo</Text>
+                    </Box>
                 </Box>
-                <Box>
-                    <Text>Agregar nuevo</Text>
-                </Box>
-            </Box>
-        </TouchableOpacity>
+            </TouchableOpacity>
     );
 }
 
-function ManagerItem({ item, number, onChange, onDelete }) {
+function ManagerItem({ item, border = 1, number, onChange, onDelete }) {
     const [visiblePassword, setVisiblePassword] = useState(false);
 
     return (
-        <Box
-            alignItems={'center'}
-            flexDirection={'row'}
-        >
-
             <Box
-                flex={1}
-                borderRadius={10}
-                key={item.id}
-                flexDirection={'column'}
-                gap={'s'}
-                p={'m'}
-                borderWidth={1}
-                borderColor={'primaryMain'}
+                    alignItems={'center'}
+                    flexDirection={'row'}
             >
-                {/* <Box width={40}>
+
+                <Box
+                        flex={1}
+                        borderRadius={10}
+                        key={item.id}
+                        flexDirection={'column'}
+                        gap={'s'}
+                        p={'m'}
+                        borderWidth={border}
+                        borderColor={'primaryMain'}
+                >
+                    {/* <Box width={40}>
                         <Box
                                 ml={'s'}
                                 width={30}
@@ -140,103 +141,103 @@ function ManagerItem({ item, number, onChange, onDelete }) {
                         </Box>
                     </Box>*/}
 
-                <Box
-                    flex={1}
-                    gap={'s'}
-                    flexDirection={'row'}
-                >
-                    <Box flex={1}>
-                        <BaseInput noMargin>
-                            <BaseTextInput
-                                value={item?.firstName}
-                                onChangeText={(el) => {
-                                    onChange({
-                                        ...item,
-                                        firstName: el
-                                    });
-                                }}
-                                placeholder={'Nombre'}
-                            />
-                        </BaseInput>
+                    <Box
+                            flex={1}
+                            gap={'s'}
+                            flexDirection={'row'}
+                    >
+                        <Box flex={1}>
+                            <BaseInput noMargin>
+                                <BaseTextInput
+                                        value={item?.firstName}
+                                        onChangeText={(el) => {
+                                            onChange({
+                                                ...item,
+                                                firstName: el
+                                            });
+                                        }}
+                                        placeholder={'Nombre'}
+                                />
+                            </BaseInput>
+                        </Box>
+                        <Box flex={1}>
+                            <BaseInput noMargin>
+                                <BaseTextInput
+                                        value={item?.lastName}
+                                        placeholder={'Apellido'}
+                                        onChangeText={(value) => {
+                                            onChange({
+                                                ...item,
+                                                lastName: value
+                                            });
+                                        }}
+                                />
+                            </BaseInput>
+                        </Box>
                     </Box>
-                    <Box flex={1}>
-                        <BaseInput noMargin>
-                            <BaseTextInput
-                                value={item?.lastName}
-                                placeholder={'Apellido'}
-                                onChangeText={(value) => {
-                                    onChange({
-                                        ...item,
-                                        lastName: value
-                                    });
-                                }}
-                            />
-                        </BaseInput>
-                    </Box>
-                </Box>
 
-                <Box flex={1}>
-                    <BaseInput noMargin>
-                        <BaseTextInput
-                            value={item?.email}
-                            placeholder={'Email'}
-                            onChangeText={(value) => {
-                                onChange({
-                                    ...item,
-                                    email: value
-                                });
-                            }}
-                        />
-                    </BaseInput>
+                    <Box flex={1}>
+                        <BaseInput noMargin>
+                            <BaseTextInput
+                                    value={item?.email}
+                                    placeholder={'Email'}
+                                    onChangeText={(value) => {
+                                        onChange({
+                                            ...item,
+                                            email: value
+                                        });
+                                    }}
+                            />
+                        </BaseInput>
+                    </Box>
+                    <Box flex={1}>
+                        <BaseInput noMargin>
+                            <BaseTextInput
+                                    secureTextEntry={!visiblePassword}
+                                    value={item?.password}
+                                    rightIcon={{
+                                        name: visiblePassword ? 'eye-outline' : 'eye-off-outline',
+                                        color: 'primaryMain',
+                                        size: 'm',
+                                        onPress: () => setVisiblePassword(!visiblePassword)
+                                    }}
+                                    onChangeText={(value) => {
+                                        onChange({
+                                            ...item,
+                                            password: value
+                                        });
+                                    }}
+                                    placeholder={'Clave'}
+                            />
+                        </BaseInput>
+                    </Box>
+                    <Box flex={1}>
+                        <BaseInput noMargin>
+                            <BaseSelectPickerInput
+                                    disabled
+                                    value={item?.role}
+                                    placeholder={'Rol'}
+                                    onChange={(value) => {
+                                        onChange({
+                                            ...item,
+                                            role: value
+                                        });
+                                    }}
+                                    choices={[
+                                        {
+                                            id: 'ADMIN',
+                                            name: 'Administrador'
+                                        },
+                                        {
+                                            id: 'ADM_RESERV',
+                                            name: 'Administrador de reservas'
+                                        }
+                                    ]}
+                            />
+                        </BaseInput>
+                    </Box>
                 </Box>
-                <Box flex={1}>
-                    <BaseInput noMargin>
-                        <BaseTextInput
-                            secureTextEntry={!visiblePassword}
-                            value={item?.password}
-                            rightIcon={{
-                                name: visiblePassword ? 'eye-outline' : 'eye-off-outline',
-                                color: 'primaryMain',
-                                size: 'm',
-                                onPress: () => setVisiblePassword(!visiblePassword)
-                            }}
-                            onChangeText={(value) => {
-                                onChange({
-                                    ...item,
-                                    password: value
-                                });
-                            }}
-                            placeholder={'Clave'}
-                        />
-                    </BaseInput>
-                </Box>
-                <Box flex={1}>
-                    <BaseInput noMargin>
-                        <BaseSelectPickerInput
-                            disabled
-                            value={item?.role}
-                            placeholder={'Rol'}
-                            onChange={(value) => {
-                                onChange({
-                                    ...item,
-                                    role: value
-                                });
-                            }}
-                            choices={[
-                                {
-                                    id: 'ADMIN',
-                                    name: 'Administrador'
-                                },
-                                {
-                                    id: 'ADM_RESERV',
-                                    name: 'Administrador de reservas'
-                                }
-                            ]}
-                        />
-                    </BaseInput>
-                </Box>
-            </Box>
-            {/*   <Box
+                {/*   <Box
                         width={40}
                         ml={'s'}
                 >
@@ -250,7 +251,7 @@ function ManagerItem({ item, number, onChange, onDelete }) {
                     />
 
                 </Box>*/}
-        </Box>
+            </Box>
     );
 }
 

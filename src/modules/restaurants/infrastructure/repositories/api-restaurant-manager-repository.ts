@@ -7,8 +7,9 @@ const COLLECTION_NAME = 'restaurant-manager';
 
 export default class ApiRestaurantManagerRepository extends APIRepository implements RestaurantManagerRepository {
 
-    async findAll(restaurantId: string): Promise<RestaurantManager[]> {
-        const docs: any = await this.findByCriteriaRequest(COLLECTION_NAME, [
+    async findAll(restaurantId: string, filters: any): Promise<RestaurantManager[]> {
+
+        const defaultFilters = [
             {
                 field: 'status',
                 operator: '==',
@@ -24,7 +25,16 @@ export default class ApiRestaurantManagerRepository extends APIRepository implem
                 operator: '==',
                 value: restaurantId
             }
-        ], undefined, undefined, true);
+        ];
+
+        if (filters.principal !== undefined) {
+            defaultFilters.push({
+                field: 'principal',
+                operator: '==',
+                value: Boolean(filters.principal)
+            });
+        }
+        const docs: any = await this.findByCriteriaRequest(COLLECTION_NAME, defaultFilters, undefined, undefined, true);
 
         return RestaurantManagerMapper.toDomainFromArray(docs);
     }
@@ -37,7 +47,7 @@ export default class ApiRestaurantManagerRepository extends APIRepository implem
         const dto = RestaurantManagerMapper.toPersistence(manager);
         const collection = manager.isVendorManager ? 'vendor-manager' : 'restaurant-manager';
 
-        const foundUser = await this.findByEmail(manager.email);
+        const foundUser = await this.findByEmail(manager.email, manager.isVendorManager ? 'VENDOR' : 'RESTAURANT');
 
         if (!foundUser) {
             if (!manager.credentials) return;

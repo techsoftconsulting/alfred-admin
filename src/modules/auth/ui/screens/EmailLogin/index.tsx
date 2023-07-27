@@ -1,7 +1,7 @@
 import SaveButton from '@main-components/Form/components/SaveButton';
 import useLoginWithEmailAndPassword from '@modules/auth/application/use-login-with-email-and-password';
 import { email, required } from '@shared/domain/form/validate';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '@shared/ui/theme/AppTheme';
 import useNavigation from '@shared/domain/hooks/navigation/use-navigation';
 import { Form } from '@main-components/Form/Form';
@@ -10,27 +10,32 @@ import Text from '@main-components/Typography/Text';
 import { Box } from '@main-components/Base/Box';
 import { Icon } from '@main-components/Base/Icon';
 import EmailTextInput from '@main-components/Form/inputs/EmailTextInput';
+import { Button } from '@main-components/Base/Button';
+import ForgotPasswordModal from '@modules/auth/ui/screens/EmailLogin/ForgotPasswordModal';
 
 export default function EmailLogin() {
     const { navigate } = useNavigation();
     const theme = useTheme();
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
 
     return (
             <Box
                     bg={'white'}
                     flex={1}
                     justifyContent={'center'}
+                    style={{
+                        backgroundImage: `linear-gradient(${theme.colors.contrastMain},${theme.colors.contrastLight}) `
+                    }}
             >
                 <Box
                         flex={0}
-                        bg='greyLight'
+                        bg='white'
                         width={'100%'}
                         borderRadius={20}
                         paddingVertical={'xl'}
                         maxWidth={400}
                         style={{
-                            minHeight: 'fit-content',
-                            backgroundImage: `linear-gradient(${theme.colors.contrastMain},${theme.colors.contrastLight}) `
+                            minHeight: 'fit-content'
                         }}
                         p={'m'}
                         margin={'m'}
@@ -59,11 +64,9 @@ export default function EmailLogin() {
                     >
                         <EmailTextInput
                                 source='email'
-                                errorColor={'white'}
                                 mode='rounded'
                                 label='Correo electrónico'
                                 placeholder='Ej. myemail@domain.com'
-                                bg={'white'}
                                 validate={[
                                     required('Escribe tu correo electrónico'),
                                     email('Correo inválido')
@@ -76,16 +79,14 @@ export default function EmailLogin() {
 
                         <PasswordInput
                                 source='password'
-                                errorColor={'white'}
-                                bg={'white'}
                                 placeholder='Escribe tu contraseña'
                                 validate={required()}
                                 mode='rounded'
                                 label='Contraseña'
                         />
 
-                        {/*<Box
-                                mb='s'
+                        <Box
+                                mb='m'
                                 mt='s'
                                 alignItems={'center'}
                         >
@@ -94,13 +95,28 @@ export default function EmailLogin() {
                                     uppercase={false}
                                     titleColor='primaryMain'
                                     onPress={() => {
-                                        navigate('forgot-password');
+                                        setShowForgotPassword(true);
                                     }}
-                                    title='¿Olvidaste tu contraseña?'
+                                    title='Olvidé mi contraseña'
                             />
-                        </Box>*/}
+                        </Box>
                     </Form>
                 </Box>
+                <Box
+                        alignItems={'center'}
+                        mt={'m'}
+                >
+                    <Text color={'white'}>powered by Alfred©</Text>
+                </Box>
+
+                <ForgotPasswordModal
+                        modal={{
+                            visible: showForgotPassword,
+                            onDismiss() {
+                                setShowForgotPassword(false);
+                            }
+                        }}
+                />
             </Box>
     );
 }
