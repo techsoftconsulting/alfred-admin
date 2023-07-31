@@ -30,7 +30,7 @@ import { required } from '@shared/domain/form/validate';
 import useNotify from '@shared/domain/hooks/use-notify';
 import useRepository from '@shared/domain/hooks/use-repository';
 import UuidUtils from '@utils/misc/uuid-utils';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SelectInput from '@main-components/Form/inputs/SelectInput';
 
 interface RestaurantFormProps {
@@ -40,10 +40,15 @@ interface RestaurantFormProps {
 }
 
 export default function RestaurantForm(props: RestaurantFormProps) {
+    const defaultValues = useMemo(() => {
+        return props.defaultValues;
+    }, [props]);
+
     return (
             <Form
                     defaultValues={{
-                        ...props.defaultValues,
+                        ...defaultValues,
+                        enableUser: false,
                         managers: [
                             {
                                 id: UuidUtils.persistenceUuid(),
@@ -300,13 +305,15 @@ function FormToolbar(props) {
     const { setError } = useForm();
     const repo = useRepository<RestaurantRepository>('RestaurantRepository');
 
+    const [saving, setSaving] = useState(false);
+
     return (
             <Box alignItems={'center'}>
                 <SaveButton
                         {...props}
                         label='Guardar'
                         titleColor={'white'}
-                        loading={loading || savingManager}
+                        loading={saving}
                         backgroundColor={'primaryMain'}
                         uppercase={false}
                         icon={() => {
@@ -317,8 +324,8 @@ function FormToolbar(props) {
                             />;
                         }}
                         onSubmit={async (data) => {
+                            setSaving(true);
                             const managerDto = data.managers?.[0];
-
                             const createdAt = new Date();
                             const id = props?.id ?? UuidUtils.persistenceUuid();
 
@@ -352,6 +359,7 @@ function FormToolbar(props) {
                                 });
 
                             } catch (e) {
+                                setSaving(false);
                                 if (e.message === 'SLUG_ALREADY_EXISTS') {
                                     setError('slug', {
                                         message: 'Código de local ya existe'
@@ -386,6 +394,7 @@ function FormToolbar(props) {
                                     await saveManager(manager);
 
                                 } catch (e) {
+                                    setSaving(false);
                                     props?.onSave?.();
 
                                     if (e.message === 'MANAGER_ALREADY_EXISTS') {
@@ -403,7 +412,7 @@ function FormToolbar(props) {
 
                             }
 
-
+                            setSaving(false);
                             props?.onSave?.();
                             notify('Guardado exitosamente', 'success');
 

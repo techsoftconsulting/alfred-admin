@@ -63,7 +63,6 @@ function PromoItem({ item, restaurant, direction }) {
                 >
 
                     <Box>
-
                         <Image
                                 resizeMode={'cover'}
                                 style={{
@@ -86,14 +85,14 @@ function PromoItem({ item, restaurant, direction }) {
                                         width={'100%'}
                                         height={'100%'}
                                         style={{
-                                            borderRadius: 20,
+                                            overflow: 'hidden',
                                             aspectRatio: 1 / 1
                                         }}
                                 >
                                     <Image
                                             resizeMode={'cover'}
                                             style={{
-                                                borderRadius: 20,
+                                                borderRadius: 18,
                                                 aspectRatio: 1 / 1
                                             }}
                                             source={{

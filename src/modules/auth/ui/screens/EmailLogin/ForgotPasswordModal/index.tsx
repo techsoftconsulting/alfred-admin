@@ -14,6 +14,7 @@ import { Button } from '@main-components/Base/Button';
 import useForgotPassword from '@modules/auth/application/use-forgot-password';
 import useVerifyResetPasswordCode from '@modules/auth/application/use-verify-reset-password-code';
 import useResetPassword from '@modules/auth/application/use-reset-password';
+import { IconButton } from '@main-components/Base/IconButton';
 
 export default function ForgotPasswordModal(props) {
     return (
@@ -24,6 +25,19 @@ export default function ForgotPasswordModal(props) {
                         top: '30%'
                     }}
             >
+                <Box
+                        position={'absolute'}
+                        top={5}
+                        right={15}
+                        zIndex={9999}
+                >
+                    <IconButton
+                            iconName={'times'}
+                            iconColor={'primaryMain'}
+                            iconSize={20}
+                            onPress={props.modal?.onDismiss}
+                    />
+                </Box>
                 <Box
                         bg={'white'}
                         flex={1}
